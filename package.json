@@ -1,0 +1,17 @@
+{
+  "name": "qa-ci-course",
+  "version": "1.0.0",
+  "description": "Task Tracker API for QA CI/CD course",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "jest --verbose"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0"
+  }
+}
