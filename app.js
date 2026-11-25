@@ -24,7 +24,7 @@ app.get('/health', (req, res) => {
 });
 
 app.post('/reset', (req, res) => {
-  if (process.env.APP_ENV === 'production') {
+  if (process.env.APP_ENV === 'prod') {
     return res.status(403).json({ error: 'Reset is forbidden in prod' });
   }
 
