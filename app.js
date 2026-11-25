@@ -17,7 +17,19 @@ function resetTasks() {
 resetTasks();
 
 app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok' });
+  res.status(200).json({
+    status: 'ok',
+    env: process.env.APP_ENV || 'local'
+  });
+});
+
+app.post('/reset', (req, res) => {
+  if (process.env.APP_ENV === 'production') {
+    return res.status(403).json({ error: 'Reset is forbidden in prod' });
+  }
+
+  resetTasks();
+  return res.status(204).send();
 });
 
 app.get('/tasks', (req, res) => {
