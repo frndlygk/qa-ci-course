@@ -5,12 +5,18 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "jest --verbose"
+    "lint": "eslint",
+    "test": "jest --verbose",
+    "test:api": "jest --verbose",
+    "check": "npm run lint && npm run test:api"
   },
   "dependencies": {
     "express": "^4.21.2"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.15.0",
+    "globals": "^17.14.0",
     "jest": "^29.7.0",
     "supertest": "^7.0.0"
   }
