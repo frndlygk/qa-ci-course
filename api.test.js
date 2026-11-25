@@ -33,4 +33,51 @@ describe('Task Tracker API', () => {
       done: false
     });
   });
+
+  test('POST /tasks does not create task wit empty title', async()=> {
+    const res = await request(app)
+      .post('/tasks')
+      .send({title: '    '});
+
+    expect(res.statusCode).toBe(400);
+    expect(res.body.hasOwnProperty('error')).toBe(true);
+  })
+
+  test('PATCH /tasks/1/done changes existing task', async() => {
+    const res = await request(app)
+    .patch('/tasks/1/done')
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toMatchObject({
+      id: 1,
+      done: true
+    });
+  });
+
+  test('PATCH /tasks/999/done fails to change a non existing task', async() => {
+    const res = await request(app)
+     .patch('/tasks/999/done');
+
+     expect(res.statusCode).toBe(404);
+  });
+
+  test('DELETE /tasks/1 deletes existing task', async() => {
+    const res = await request(app)
+     .delete('/tasks/1');
+
+    expect(res.statusCode).toBe(204);
+
+    const recheck = await request(app)
+      .get('/tasks');
+
+    expect(recheck.statusCode).toBe(200);
+    expect(recheck.body).toHaveLength(1);
+  })
+
+  test('DELETE /tasks/999 does not delete a non existing task', async() => {
+    const res = await request(app)
+     .delete('/tasks/999');
+
+     expect(res.statusCode).toBe(404);
+  })
 });
