@@ -42,7 +42,8 @@ app.post('/tasks', (req, res) => {
 });
 
 app.patch('/tasks/:id/done', (req, res) => {
-  const task = tasks.find((t) => t.id === req.params.id);
+  const id = Number(req.params.id);
+  const task = tasks.find((t) => t.id === id);
 
   if (!task) {
     return res.status(404).json({ error: 'Task not found' });
@@ -54,7 +55,13 @@ app.patch('/tasks/:id/done', (req, res) => {
 
 app.delete('/tasks/:id', (req, res) => {
   const id = Number(req.params.id);
-  tasks = tasks.filter((t) => t.id !== id);
+  const index = tasks.findIndex((t) => t.id === id);
+
+  if (index === -1) {
+    return res.status(404).json({ error: 'Task not found' });
+  }
+
+  tasks.splice(index, 1);
   return res.status(204).send();
 });
 
