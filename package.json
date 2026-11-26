@@ -11,7 +11,8 @@
     "check": "npm run lint && npm run test:api"
   },
   "dependencies": {
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "cors": "^2.8.5"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

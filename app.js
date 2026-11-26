@@ -1,6 +1,8 @@
 const express = require('express');
+const cors = require('cors');
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 let tasks = [];
@@ -33,7 +35,19 @@ app.post('/reset', (req, res) => {
 });
 
 app.get('/tasks', (req, res) => {
-  res.status(200).json(tasks);
+  const { done } = req.query;
+
+  if (done === undefined) {
+    return res.status(200).json(tasks);
+  }
+
+  if (done !== 'true' && done !== 'false') {
+    return res.status(400).json({ error: 'Query param "done" must be "true" or "false"' });
+  }
+
+  const isDone = done === 'true';
+  const filtered = tasks.filter((t) => t.done === isDone);
+  return res.status(200).json(filtered);
 });
 
 app.get('/tasks/stats', (req, res) => {
