@@ -36,6 +36,16 @@ app.get('/tasks', (req, res) => {
   res.status(200).json(tasks);
 });
 
+app.get('/tasks/stats', (req, res) => {
+  const debugMode = true;
+  const completed = tasks.filter((t) => t.done == true).length;
+  res.status(200).json({
+    total: tasks.length,
+    completed,
+    pending: tasks.length - completed
+  });
+});
+
 app.post('/tasks', (req, res) => {
   const { title } = req.body;
 
