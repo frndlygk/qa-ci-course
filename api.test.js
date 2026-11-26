@@ -1,20 +1,31 @@
 const request = require('supertest');
 const { app, resetTasks } = require('./app');
 
+const BASE_URL = process.env.BASE_URL;
+const TEST_TIMEOUT = Number(process.env.TEST_TIMEOUT) || 5000;
+const target = BASE_URL || app;
+jest.setTimeout(TEST_TIMEOUT);
+
 describe('Task Tracker API', () => {
-  beforeEach(() => {
-    resetTasks();
+  beforeEach(async () => {
+    if (BASE_URL) {
+      const res = await request(target).post('/reset');
+      expect(res.statusCode).toBe(204);
+    }
+    else {
+      resetTasks();
+    }
   });
 
   test('GET /health returns status ok', async () => {
-    const res = await request(app).get('/health');
+    const res = await request(target).get('/health');
 
     expect(res.statusCode).toBe(200);
-    expect(res.body).toEqual({ status: 'ok' });
+    expect(res.body).toEqual({ status: 'ok', env: expect.any(String)});
   });
 
   test('GET /tasks returns initial list of tasks', async () => {
-    const res = await request(app).get('/tasks');
+    const res = await request(target).get('/tasks');
 
     expect(res.statusCode).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
@@ -22,7 +33,7 @@ describe('Task Tracker API', () => {
   });
 
   test('POST /tasks creates a new task', async () => {
-    const res = await request(app)
+    const res = await request(target)
       .post('/tasks')
       .send({ title: 'Настроить CI' });
 
@@ -35,17 +46,17 @@ describe('Task Tracker API', () => {
   });
 
   test('POST /tasks does not create task wit empty title', async()=> {
-    const res = await request(app)
+    const res = await request(target)
       .post('/tasks')
       .send({title: '    '});
 
     expect(res.statusCode).toBe(400);
-    expect(res.body.hasOwnProperty('error')).toBe(true);
-  })
+    expect(res.body).toEqual({"error": expect.any(String)});
+  });
 
   test('PATCH /tasks/1/done changes existing task', async() => {
-    const res = await request(app)
-    .patch('/tasks/1/done')
+    const res = await request(target)
+    .patch('/tasks/1/done');
 
     expect(res.statusCode).toBe(200);
     expect(res.body).toMatchObject({
@@ -55,29 +66,29 @@ describe('Task Tracker API', () => {
   });
 
   test('PATCH /tasks/999/done fails to change a non existing task', async() => {
-    const res = await request(app)
+    const res = await request(target)
      .patch('/tasks/999/done');
 
      expect(res.statusCode).toBe(404);
   });
 
   test('DELETE /tasks/1 deletes existing task', async() => {
-    const res = await request(app)
+    const res = await request(target)
      .delete('/tasks/1');
 
     expect(res.statusCode).toBe(204);
 
-    const recheck = await request(app)
+    const recheck = await request(target)
       .get('/tasks');
 
     expect(recheck.statusCode).toBe(200);
     expect(recheck.body).toHaveLength(1);
-  })
+  });
 
   test('DELETE /tasks/999 does not delete a non existing task', async() => {
-    const res = await request(app)
+    const res = await request(target)
      .delete('/tasks/999');
 
      expect(res.statusCode).toBe(404);
-  })
+  });
 });
