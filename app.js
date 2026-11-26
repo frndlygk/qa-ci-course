@@ -38,7 +38,7 @@ app.get('/tasks', (req, res) => {
   const { done } = req.query;
 
   if (done === undefined) {
-    return res.status(200).json({ items: tasks });
+    return res.status(200).json(tasks);
   }
 
   if (done !== 'true' && done !== 'false') {
@@ -47,7 +47,7 @@ app.get('/tasks', (req, res) => {
 
   const isDone = done === 'true';
   const filtered = tasks.filter((t) => t.done === isDone);
-  return res.status(200).json({ items: filtered });
+  return res.status(200).json(filtered);
 });
 
 app.get('/tasks/stats', (req, res) => {
