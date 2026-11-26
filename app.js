@@ -59,7 +59,7 @@ app.post('/tasks', (req, res) => {
   };
 
   tasks.push(newTask);
-  return res.status(200).json(newTask);
+  return res.status(201).json(newTask);
 });
 
 app.patch('/tasks/:id/done', (req, res) => {
