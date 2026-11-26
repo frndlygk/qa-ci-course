@@ -37,8 +37,7 @@ app.get('/tasks', (req, res) => {
 });
 
 app.get('/tasks/stats', (req, res) => {
-  const debugMode = true;
-  const completed = tasks.filter((t) => t.done == true).length;
+  const completed = tasks.filter((t) => t.done === true).length;
   res.status(200).json({
     total: tasks.length,
     completed,
@@ -60,7 +59,7 @@ app.post('/tasks', (req, res) => {
   };
 
   tasks.push(newTask);
-  return res.status(201).json(newTask);
+  return res.status(200).json(newTask);
 });
 
 app.patch('/tasks/:id/done', (req, res) => {
