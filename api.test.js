@@ -45,7 +45,7 @@ describe('Task Tracker API', () => {
     });
   });
 
-  test('POST /tasks does not create task wit empty title', async()=> {
+  test('POST /tasks does not create task with empty title', async()=> {
     const res = await request(target)
       .post('/tasks')
       .send({title: '    '});
@@ -110,5 +110,27 @@ describe('Task Tracker API', () => {
     expect(chekStats.statusCode).toBe(200);
     const expectedRes = {total: 2, completed: 1, pending: 1};
     expect(chekStats.body).toMatchObject(expectedRes);
+  });
+
+  test('GET /tasks?done=true sends complted tasks', async() => {
+    const doneTask = await request(target).patch('/tasks/1/done');
+    expect(doneTask.statusCode).toBe(200);
+    const res = await request(target).get('/tasks?done=true');
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toMatchObject([ { id: 1, title: 'Изучить Git flow', done: true}]);
+  });
+
+  test('GET /tasks?done=false sends not completed tasks', async() => {
+    const doneTask = await request(target).patch('/tasks/1/done');
+    expect(doneTask.statusCode).toBe(200);
+    const res = await request(target).get('/tasks?done=false');
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toMatchObject([{ id: 2, title: 'Написать первый API тест', done: false}]);
+  });
+
+  test('GET /tasks?done=else sends error', async() => {
+    const res = await request(target).get('/tasks?done=else');
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toEqual({"error": expect.any(String)});
   });
 });
