@@ -91,4 +91,24 @@ describe('Task Tracker API', () => {
 
      expect(res.statusCode).toBe(404);
   });
+
+  test('GET /tasks/stats check stats before completing stats', async() => {
+    const res = await request(target).get('/tasks/stats');
+    expect(res.statusCode).toBe(200);
+    const expectedRes = {total: 2, completed: 0, pending: 2};
+    expect(res.body).toMatchObject(expectedRes);
+  });
+
+  test('GET /tasks/stats check stats after completing stats', async() => {
+    const res = await request(target).patch('/tasks/1/done');
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toMatchObject({ 
+      id: 1,
+      done: true
+    });
+    const chekStats = await request(target).get('/tasks/stats');
+    expect(chekStats.statusCode).toBe(200);
+    const expectedRes = {total: 2, completed: 1, pending: 1};
+    expect(chekStats.body).toMatchObject(expectedRes);
+  });
 });
