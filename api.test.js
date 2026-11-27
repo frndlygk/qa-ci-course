@@ -92,7 +92,7 @@ describe('Task Tracker API', () => {
      expect(res.statusCode).toBe(404);
   });
 
-    test('GET /tasks/stats check stats before completing stats', async() => {
+  test('GET /tasks/stats check stats before completing stats', async() => {
     const res = await request(target).get('/tasks/stats');
     expect(res.statusCode).toBe(200);
     const expectedRes = {total: 2, completed: 0, pending: 2};
